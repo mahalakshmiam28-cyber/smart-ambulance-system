@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Ambulance System</title>
+  <!-- Leaflet Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+    }
+
+    h1 {
+      margin: 10px;
+    }
+
+    #map {
+      height: 400px;
+      width: 90%;
+      margin: auto;
+      border-radius: 10px;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      font-size: 16px;
+      background: red;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: darkred;
+    }
+
+    #info {
+      margin-top: 20px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Smart Ambulance System</h1>
+
+<div id="map"></div>
+
+<button onclick="requestAmbulance()">Request Ambulance</button>
+
+<div id="info"></div>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script>
+  let map = L.map('map').setView([12.9716, 77.5946], 13); // Bangalore default
+
+  // Map tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {}).addTo(map);
+
+  let userMarker;
+
+  // Get user location
+  navigator.geolocation.getCurrentPosition(position => {
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+
+    map.setView([lat, lng], 15);
+
+    userMarker = L.marker([lat, lng]).addTo(map)
+      .bindPopup("You are here")
+      .openPopup();
+  });
+
+  // Request ambulance (mocked until backend is ready)
+  async function requestAmbulance() {
+    // Mock data
+    const data = {
+      ambulance: "Ambulance #12",
+      hospital: "City Hospital",
+      time: 8
+    };
+
+    // Update info panel
+    document.getElementById("info").innerHTML = `
+      🚑 Ambulance: ${data.ambulance} <br>
+      🏥 Hospital: ${data.hospital} <br>
+      ⏱️ ETA: ${data.time} mins
+    `;
+
+    // Simulated ambulance marker
+    const ambulance = L.marker([
+      map.getCenter().lat + 0.01,
+      map.getCenter().lng + 0.01
+    ]).addTo(map).bindPopup("Ambulance");
+
+    // Draw route line (fake)
+    const route = L.polyline([
+      [map.getCenter().lat, map.getCenter().lng],
+      [map.getCenter().lat + 0.01, map.getCenter().lng + 0.01]
+    ]).addTo(map);
+
+    // Animate ambulance
+    animateAmbulance(ambulance);
+  }
+
+  // Animation
+  function animateAmbulance(marker) {
+    let lat = marker.getLatLng().lat;
+    let lng = marker.getLatLng().lng;
+
+    let interval = setInterval(() => {
+      lat -= 0.0005;
+      lng -= 0.0005;
+
+      marker.setLatLng([lat, lng]);
+
+      if (Math.abs(lat - map.getCenter().lat) < 0.001) {
+        clearInterval(interval);
+        alert("🚑 Ambulance Arrived!");
+      }
+    }, 300);
+  }
+</script>
+</body>
+</html>

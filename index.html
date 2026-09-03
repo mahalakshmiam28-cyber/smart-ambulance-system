@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Ambulance Dispatch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">AI Dispatch Intelligence</p>
+        <h1>Ambulance routing that weighs urgency, traffic, hospital load, and specialty fit.</h1>
+        <p class="hero-text">
+          Enter the emergency type, choose the incident location, and let the system select the
+          nearest available ambulance while ranking hospitals with an explainable weighted model.
+        </p>
+        <div class="hero-actions">
+          <a class="ghost-link-button" href="/admin-login.html">Open Admin Console</a>
+        </div>
+      </div>
+      <div class="hero-metrics">
+        <div class="metric-card">
+          <span class="metric-label">Decision Goal</span>
+          <strong>Lower response time</strong>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">Ranking Model</span>
+          <strong>Distance + traffic + load + priority</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel flow-panel">
+      <div class="flow-header">
+        <div>
+          <p class="eyebrow">Dispatch Flow</p>
+          <h2>Emergency response moves through one clear order.</h2>
+        </div>
+        <p class="detail-meta">Track the journey from incident intake to hospital recommendation.</p>
+      </div>
+      <div class="flow-chart">
+        <article class="flow-step">
+          <span class="flow-step-number">1</span>
+          <h3>Capture Incident</h3>
+          <p>Enter emergency type, use live location or map selection, and confirm the patient area.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-step-number">2</span>
+          <h3>Match Ambulance</h3>
+          <p>The backend finds the nearest available ambulance and prevents double allocation.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-step-number">3</span>
+          <h3>Rank Hospitals</h3>
+          <p>Hospitals are scored with distance, traffic, load, and emergency specialty fit.</p>
+        </article>
+        <article class="flow-step">
+          <span class="flow-step-number">4</span>
+          <h3>Guide Before Arrival</h3>
+          <p>Pre-arrival precautions appear below intake while the live ambulance route updates on the map.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="dashboard">
+      <div class="panel controls-panel">
+        <h2>Incident Intake</h2>
+        <div class="controls-grid">
+          <label>
+            <span>Emergency Type</span>
+            <select id="emergency-type">
+              <option value="cardiac">Cardiac emergency</option>
+              <option value="trauma">Trauma / accident</option>
+              <option value="stroke">Stroke / neuro</option>
+              <option value="pediatric">Pediatric emergency</option>
+              <option value="maternity">Maternity emergency</option>
+              <option value="respiratory">Respiratory distress</option>
+              <option value="general" selected>General emergency</option>
+            </select>
+          </label>
+          <label>
+            <span>Latitude</span>
+            <input id="test-lat" type="number" step="any" placeholder="12.971600" />
+          </label>
+          <label>
+            <span>Longitude</span>
+            <input id="test-lng" type="number" step="any" placeholder="77.594600" />
+          </label>
+          <label>
+            <span>Area / Landmark (Manual)</span>
+            <input id="area-query" type="text" placeholder="Enter manually (Indiranagar, MG Road, Koramangala)" />
+          </label>
+          <div id="area-suggestions" class="autocomplete-dropdown"></div>
+        </div>
+        <div class="action-row">
+          <button type="button" class="ghost-button" onclick="useTestLocation()">Use Coordinates</button>
+          <button type="button" class="ghost-button" onclick="useLiveLocation()">Use Live Location</button>
+          <button type="button" class="primary-button" onclick="requestAmbulance()">Run Dispatch</button>
+        </div>
+        <div id="selected-location" class="selected-location">
+          Selected location: Latitude -, Longitude -
+        </div>
+        <p class="hint">Tip: click anywhere on the map to set the incident location. Enter landmark manually.</p>
+
+        <section class="guidance-panel intake-guidance-panel">
+          <h2>Pre-Arrival Guidance</h2>
+          <div id="guidance" class="guidance-content">
+            Precautions and first-aid instructions will appear here after dispatch.
+          </div>
+        </section>
+      </div>
+
+      <div class="panel map-panel">
+        <div id="map"></div>
+        <div class="live-tracker">
+          <div class="tracker-chip">Live Map Tracking</div>
+          <div id="tracking-status" class="tracking-status">
+            🚑 Waiting for a dispatch request.
+          </div>
+          <button onclick="toggleDriverPanel()" class="ghost-button driver-toggle" title="Driver Directions">
+            🚗 Driver Mode
+          </button>
+        </div>
+        <div id="driver-directions-panel" class="driver-panel" style="display: none;">
+          <div class="driver-header">
+            <h3>Driver Directions</h3>
+            <button onclick="toggleDriverPanel()" class="close-btn">×</button>
+          </div>
+          <div id="current-direction" class="current-direction">
+            Select destination for turn-by-turn
+          </div>
+          <div id="directions-list" class="directions-list">
+            Directions will appear here
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="results-grid">
+      <div class="panel result-panel">
+        <h2>Dispatch Recommendation</h2>
+        <div id="info" class="result-content">
+          Dispatch results will appear here after you run the model.
+        </div>
+      </div>
+
+      <div class="panel alternatives-panel">
+        <h2>Top Alternatives</h2>
+        <div id="alternatives" class="alternatives-list">
+          Alternative hospitals will appear here after ranking.
+        </div>
+      </div>
+    </section>
+
+    <section class="panel ai-panel">
+      <h2>AI Decision Support</h2>
+      <div id="ai-dispatch-insight" class="guidance-content">
+        AI dispatch insights will appear here after you run the model.
+      </div>
+    </section>
+
+    <section class="panel debug-panel">
+      <h2>System Trace</h2>
+      <div id="debug">Waiting for location input.</div>
+    </section>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="driver-directions.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dispatch Admin Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <section class="hero admin-hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Operations View</p>
+        <h1>Admin dashboard for live usage, dispatch load, and ambulance availability.</h1>
+        <p class="hero-text">
+          Track active users, watch current dispatches, and release ambulances only when a dispatch
+          is completed.
+        </p>
+        <div class="hero-actions">
+          <a class="ghost-link-button" href="/index.html">Back To Dispatch</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-metrics-grid">
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Active Users</span>
+        <strong id="metric-active-users">0</strong>
+      </article>
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Total Sessions</span>
+        <strong id="metric-total-sessions">0</strong>
+      </article>
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Active Dispatches</span>
+        <strong id="metric-active-dispatches">0</strong>
+      </article>
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Available Ambulances</span>
+        <strong id="metric-available-ambulances">0</strong>
+      </article>
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Busy Ambulances</span>
+        <strong id="metric-busy-ambulances">0</strong>
+      </article>
+      <article class="metric-card admin-metric-card">
+        <span class="metric-label">Total Dispatches</span>
+        <strong id="metric-total-dispatches">0</strong>
+      </article>
+    </section>
+
+    <section class="admin-analytics-grid">
+      <article class="panel analytics-panel">
+        <div class="analytics-header">
+          <div>
+            <p class="eyebrow">Fleet Pulse</p>
+            <h2>Ambulance Utilization</h2>
+          </div>
+          <span id="fleet-utilization-label" class="tag">0% busy</span>
+        </div>
+        <div class="radial-chart-wrap">
+          <div id="fleet-utilization-chart" class="radial-chart"></div>
+          <div class="chart-legend">
+            <div class="legend-row">
+              <span class="legend-dot available-dot"></span>
+              <span>Available units</span>
+              <strong id="fleet-available-label">0</strong>
+            </div>
+            <div class="legend-row">
+              <span class="legend-dot busy-dot"></span>
+              <span>Busy units</span>
+              <strong id="fleet-busy-label">0</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel analytics-panel">
+        <div class="analytics-header">
+          <div>
+            <p class="eyebrow">Demand Curve</p>
+            <h2>User And Dispatch Intensity</h2>
+          </div>
+          <span id="demand-intensity-label" class="tag">Stable</span>
+        </div>
+        <div id="demand-bars" class="bars-chart"></div>
+      </article>
+
+      <article class="panel analytics-panel">
+        <div class="analytics-header">
+          <div>
+            <p class="eyebrow">Response Mix</p>
+            <h2>Active Dispatch ETA Spread</h2>
+          </div>
+          <span id="eta-summary-label" class="tag">No active ETAs</span>
+        </div>
+        <div id="eta-distribution" class="eta-distribution"></div>
+      </article>
+    </section>
+
+    <section class="panel admin-panel">
+      <div class="admin-panel-header">
+        <div>
+          <h2>Active Dispatches</h2>
+          <p id="admin-window-label" class="detail-meta">Users active in the last 10 minutes.</p>
+        </div>
+        <div class="admin-header-actions">
+          <button id="refresh-admin" type="button" class="ghost-button">Refresh</button>
+          <button id="logout-admin" type="button" class="ghost-button">Logout</button>
+        </div>
+      </div>
+      <div id="admin-status" class="selected-location">Loading admin metrics...</div>
+      <div id="dispatch-table" class="admin-table-wrap"></div>
+    </section>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>

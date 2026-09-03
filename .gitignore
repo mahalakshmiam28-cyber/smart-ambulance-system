@@ -1,0 +1,13 @@
+# Dependencies
+node_modules/
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Runtime logs
+*.log
+
+# Editor settings
+.vscode/

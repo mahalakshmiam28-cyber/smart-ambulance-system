@@ -1,0 +1,14 @@
+{
+  "name": "smart-ambulance-system",
+  "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "mysql2": "^3.15.2"
+  }
+}

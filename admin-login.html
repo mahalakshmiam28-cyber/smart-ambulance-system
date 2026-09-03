@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <section class="panel admin-login-panel">
+      <p class="eyebrow">Protected Access</p>
+      <h1>Enter the admin password to open the operations console.</h1>
+      <p class="hero-text">
+        This keeps normal users away from live dispatch metrics and ambulance controls.
+      </p>
+
+      <section class="flow-panel compact-flow-panel">
+        <div class="flow-header">
+          <div>
+            <p class="eyebrow">Admin Flow</p>
+            <h2>Protected access follows a simple order.</h2>
+          </div>
+        </div>
+        <div class="flow-chart admin-flow-chart">
+          <article class="flow-step">
+            <span class="flow-step-number">1</span>
+            <h3>Authenticate</h3>
+            <p>Only admins with the password can enter the console.</p>
+          </article>
+          <article class="flow-step">
+            <span class="flow-step-number">2</span>
+            <h3>Monitor Usage</h3>
+            <p>Review live users, active dispatches, and ambulance availability.</p>
+          </article>
+          <article class="flow-step">
+            <span class="flow-step-number">3</span>
+            <h3>Control Dispatch</h3>
+            <p>Mark completed trips so ambulances return safely to the available pool.</p>
+          </article>
+        </div>
+      </section>
+
+      <form id="admin-login-form" class="admin-login-form">
+        <label>
+          <span>Admin Password</span>
+          <input id="admin-password" type="password" autocomplete="current-password" required />
+        </label>
+        <div class="action-row">
+          <button type="submit" class="primary-button">Open Admin Console</button>
+          <a class="ghost-link-button" href="/index.html">Back To Dispatch</a>
+        </div>
+      </form>
+
+      <div id="admin-login-status" class="selected-location">
+        Admin access is protected by password.
+      </div>
+    </section>
+  </div>
+
+  <script src="admin-login.js"></script>
+</body>
+</html>
