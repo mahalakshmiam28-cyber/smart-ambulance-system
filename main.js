@@ -16,6 +16,26 @@ let areaLookupController = null;
 let dispatchEventSource = null;
 const WEBSITE_SESSION_KEY = "smart_ambulance_session_id";
 
+function setDispatchFlow(activeStep, states = {}, announcement) {
+  document.querySelectorAll("[data-flow-step]").forEach((step) => {
+    const stepNumber = Number(step.dataset.flowStep);
+    const state = states[stepNumber] || (stepNumber === activeStep ? "active" : "pending");
+    const stateLabel = step.querySelector(".flow-state");
+    step.classList.remove("is-active", "is-complete", "is-error");
+
+    if (state === "active") step.classList.add("is-active");
+    if (state === "complete") step.classList.add("is-complete");
+    if (state === "error") step.classList.add("is-error");
+
+    if (stateLabel) {
+      stateLabel.textContent =
+        state === "complete" ? "Complete" : state === "active" ? "In progress" : state === "error" ? "Needs attention" : "Waiting";
+    }
+  });
+
+  if (announcement) document.getElementById("flow-announcement").textContent = announcement;
+}
+
 function getSessionId() {
   let sessionId = window.localStorage.getItem(WEBSITE_SESSION_KEY);
 
@@ -255,6 +275,8 @@ function updateAmbulanceFromStream(snapshot) {
   updateTrackingStatus(
     `${snapshot.stageLabel}. Current ambulance position: ${Number(snapshot.latitude).toFixed(5)}, ${Number(snapshot.longitude).toFixed(5)}. ETA remaining: ${formatEta(Number(snapshot.etaMinutesRemaining))}`
   );
+
+  setDispatchFlow(4, { 1: "complete", 2: "complete", 3: "complete", 4: snapshot.status === "completed" ? "complete" : "active" }, snapshot.status === "completed" ? "Patient transfer completed at the selected hospital." : "Ambulance is en route. Follow the live map and pre-arrival guidance.");
 
   if (snapshot.status === "completed") {
     ambulanceMarker.openPopup();
@@ -656,6 +678,7 @@ function useTestLocation() {
   setUserMarker(lat, lng, "Incident location");
   autofillAreaFromCoordinates(lat, lng);
   updateDebug(`Manual coordinates selected: lat=${lat}, lng=${lng}`);
+  setDispatchFlow(1, { 1: "active" }, "Incident location captured. You can now run dispatch.");
 }
 
 function useLiveLocation() {
@@ -712,6 +735,7 @@ function selectSuggestion(area) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  setDispatchFlow(0, {}, "Select an incident location to begin.");
   const areaInput = document.getElementById('area-query');
   
   areaInput.addEventListener('input', async () => {
@@ -745,6 +769,7 @@ map.on("click", (event) => {
   setUserMarker(lat, lng, "Incident selected on map");
   autofillAreaFromCoordinates(lat, lng);
   updateDebug(`Map click selected incident point: lat=${lat}, lng=${lng}`);
+  setDispatchFlow(1, { 1: "active" }, "Incident location captured. You can now run dispatch.");
 });
 
 function startLiveLocationTracking(shouldCenterMap) {
@@ -775,6 +800,7 @@ function startLiveLocationTracking(shouldCenterMap) {
       updateDebug(
         `Exact live location tracked: lat=${lat}, lng=${lng}, accuracy=${Math.round(accuracy)}m`
       );
+      setDispatchFlow(1, { 1: "active" }, "Live incident location captured. You can now run dispatch.");
       updateLiveEtaFromState();
     },
     () => {
@@ -802,6 +828,7 @@ async function requestAmbulance() {
   updateDebug(
     `Dispatch requested for ${emergencyType} at lat=${center.lat}, lng=${center.lng}${areaQuery ? `, area=${areaQuery}` : ""}`
   );
+  setDispatchFlow(2, { 1: "complete", 2: "active" }, "Finding the nearest available ambulance.");
 
   try {
     const response = await fetch("/api/request-ambulance", {
@@ -826,6 +853,7 @@ async function requestAmbulance() {
     renderAlternatives(data.alternatives);
     renderAiDispatchInsight(data.aiDispatchInsight);
     renderPreArrivalGuidance(data.preArrivalGuidance);
+    setDispatchFlow(4, { 1: "complete", 2: "complete", 3: "complete", 4: "active" }, "Ambulance and hospital selected. Live tracking is now active.");
 
     if (ambulanceMarker) {
       map.removeLayer(ambulanceMarker);
@@ -850,6 +878,7 @@ async function requestAmbulance() {
       `${data.selectedAmbulance.ambulanceCode} dispatched. ${data.bestHospital.hospital} ranked first with score ${data.bestHospital.score}.`
     );
   } catch (error) {
+    setDispatchFlow(2, { 1: selectedLocation ? "complete" : "pending", 2: "error" }, "Dispatch could not be completed. Check the connection and try again.");
     document.getElementById("info").innerHTML = `
       <div class="empty-state">
         Dispatch failed: ${error.message}. Make sure the Node server and database are available.

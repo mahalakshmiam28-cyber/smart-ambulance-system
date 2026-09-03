@@ -47,28 +47,33 @@
         </div>
         <p class="detail-meta">Track the journey from incident intake to hospital recommendation.</p>
       </div>
-      <div class="flow-chart">
-        <article class="flow-step">
+      <div class="flow-chart" aria-label="Live dispatch progress">
+        <article class="flow-step" data-flow-step="1">
           <span class="flow-step-number">1</span>
           <h3>Capture Incident</h3>
           <p>Enter emergency type, use live location or map selection, and confirm the patient area.</p>
+          <span class="flow-state">Waiting for location</span>
         </article>
-        <article class="flow-step">
+        <article class="flow-step" data-flow-step="2">
           <span class="flow-step-number">2</span>
           <h3>Match Ambulance</h3>
           <p>The backend finds the nearest available ambulance and prevents double allocation.</p>
+          <span class="flow-state">Waiting for dispatch</span>
         </article>
-        <article class="flow-step">
+        <article class="flow-step" data-flow-step="3">
           <span class="flow-step-number">3</span>
           <h3>Rank Hospitals</h3>
           <p>Hospitals are scored with distance, traffic, load, and emergency specialty fit.</p>
+          <span class="flow-state">Waiting for dispatch</span>
         </article>
-        <article class="flow-step">
+        <article class="flow-step" data-flow-step="4">
           <span class="flow-step-number">4</span>
           <h3>Guide Before Arrival</h3>
           <p>Pre-arrival precautions appear below intake while the live ambulance route updates on the map.</p>
+          <span class="flow-state">Waiting for dispatch</span>
         </article>
       </div>
+      <p id="flow-announcement" class="flow-announcement" aria-live="polite">Select an incident location to begin.</p>
     </section>
 
     <section class="dashboard">

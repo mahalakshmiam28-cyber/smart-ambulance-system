@@ -180,6 +180,26 @@ body {
     linear-gradient(180deg, rgba(53, 208, 186, 0.08), rgba(9, 18, 31, 0.9)),
     var(--panel-strong);
   border: 1px solid rgba(151, 168, 191, 0.16);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.flow-step.is-active {
+  border-color: rgba(255, 107, 61, 0.9);
+  box-shadow: 0 0 0 3px rgba(255, 107, 61, 0.14), 0 16px 35px rgba(255, 107, 61, 0.12);
+  transform: translateY(-3px);
+}
+
+.flow-step.is-complete {
+  border-color: rgba(53, 208, 186, 0.6);
+}
+
+.flow-step.is-complete .flow-step-number {
+  background: var(--teal);
+  color: #04101d;
+}
+
+.flow-step.is-error {
+  border-color: rgba(255, 107, 61, 0.9);
 }
 
 .flow-step::after {
@@ -218,6 +238,32 @@ body {
   margin: 0;
   color: var(--muted);
   line-height: 1.6;
+}
+
+.flow-state {
+  display: inline-flex;
+  margin-top: 14px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.flow-step.is-active .flow-state {
+  color: #ffd9ca;
+  background: rgba(255, 107, 61, 0.16);
+}
+
+.flow-step.is-complete .flow-state {
+  color: var(--teal);
+  background: rgba(53, 208, 186, 0.13);
+}
+
+.flow-announcement {
+  margin: 18px 0 0;
+  color: var(--muted);
 }
 
 .compact-flow-panel {
