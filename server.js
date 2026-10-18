@@ -2204,7 +2204,9 @@ app.post("/api/request-ambulance", async (req, res) => {
     return res.status(500).json({ error: "Database connection failed" });
   }
 });
-
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 const server = app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
