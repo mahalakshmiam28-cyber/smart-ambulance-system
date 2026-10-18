@@ -215,6 +215,9 @@ const dbPool = mysql.createPool({
 });
 
 app.use(express.json());
+app.get("/", (req, res) => {
+    res.send("Smart Ambulance System is running!");
+});
 
 function parseCookies(cookieHeader = "") {
   return cookieHeader
